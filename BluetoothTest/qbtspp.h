@@ -2,11 +2,17 @@
 #define QBTSPP_H
 
 #include <QObject>
+#include <QSerialPort>
 
-class QBTSPP
+class QBTSPP : public QSerialPort
 {
 public:
     QBTSPP();
+    void openConnection(QString portName, int baud);
+    void writeStr(QString string);
+
+
+
 };
 
 #endif // QBTSPP_H
