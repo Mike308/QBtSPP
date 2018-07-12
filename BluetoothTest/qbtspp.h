@@ -9,6 +9,7 @@ class QBTSPP : public QSerialPort
 public:
     QBTSPP();
     void openConnection(QString portName, int baud);
+    void closeConnection();
     void writeStr(QString string);
 
 
