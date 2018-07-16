@@ -3,14 +3,35 @@
 
 #include <QObject>
 #include <QSerialPort>
+#include <QThread>
+#include <QDebug>
 
-class QBTSPP : public QSerialPort
+#include "qbtsppworker.h"
+class QBtSPPWorker;
+class QBTSPP : public QObject
 {
+    Q_OBJECT
 public:
     QBTSPP();
+    ~QBTSPP();
     void openConnection(QString portName, int baud);
     void closeConnection();
-    void writeStr(QString string);
+
+
+private:
+    QThread *workerThread;
+    QBtSPPWorker *worker;
+    QBTSPP *btNew;
+
+public slots:
+    void onConnectionStatusChanged(bool status);
+    void writeString(QString string);
+
+signals:
+    void writedString(QString const &txStr);
+
+
+
 
 
 
