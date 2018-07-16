@@ -2,23 +2,28 @@
 #define QBTSPPWORKER_H
 
 #include <QObject>
-#include "qbtspp.h"
+#include <QSerialPort>
 #include <QDebug>
 
-class QBTSPP;
+#include "qbtspp.h"
+
+
 
 class QBtSPPWorker : public QObject
 {
     Q_OBJECT
 public:
 
-    QBtSPPWorker(QBTSPP *bt);
+     QBtSPPWorker(QString portName, int baud);
 
 private:
-    QBTSPP *bt;
+    QString portName;
+    int baud;
+    QSerialPort *sp;
+
 
 signals:
-    void connectioStatusChanged(bool status);
+    void connectionStatusChanged(bool status);
     void dataReceived(QString rxStr);
 
 public slots:
