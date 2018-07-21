@@ -2,14 +2,11 @@
 
 
 QBtSPPWorker::QBtSPPWorker(QString portName, int baud){
-
     this->portName = portName;
     this->baud = baud;
-
 }
 
 void QBtSPPWorker::onConnecting(){
-
     sp = new QSerialPort();
     sp->setPortName(portName);
     sp->setBaudRate(baud);
@@ -18,18 +15,19 @@ void QBtSPPWorker::onConnecting(){
     sp->setStopBits(QSerialPort::OneStop);
     emit connectionStatusChanged(false);
     sp->open(QIODevice::ReadWrite);
-    qDebug () << "Test" << portName << "|" << baud;
     emit connectionStatusChanged(true);
+    connect(sp, SIGNAL(readyRead()), this, SLOT(onStringReceive()));
 }
 
 void QBtSPPWorker::onWriteString(const QString &str){
     const QByteArray &arrayToSend = str.toLocal8Bit();
-    qDebug () << "String to send: " << str;
     sp->write(arrayToSend);
 }
 
 void QBtSPPWorker::onStringReceive(){
-
+    if (sp->canReadLine()){
+        emit dataReceived(QString::fromLatin1(sp->readAll()));
+    }
 }
 
 
