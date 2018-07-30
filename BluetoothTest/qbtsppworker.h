@@ -15,21 +15,28 @@ class QBtSPPWorker : public QObject
 public:
 
      QBtSPPWorker(QString portName, int baud);
+     QBtSPPWorker();
+     void setPortName(const QString &value);
+     void setBaud(int value);
+     void setEndOfString(const QString &value);
 
 private:
-    QString portName;
-    int baud;
-    QSerialPort *sp;
+     QString portName;
+     int baud;
+     QSerialPort *sp;
+     QString endOfString;
 
 
 signals:
     void connectionStatusChanged(bool status);
     void dataReceived(QString rxStr);
+    void disconnected();
 
 public slots:
     void onConnecting();
-    void onWriteString(QString const &str);
+    void onWriteString(QString str);
     void onStringReceive();
+    void onCloseConnection();
 
 
 };
