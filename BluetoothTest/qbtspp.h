@@ -23,7 +23,7 @@ public:
 
 
 private:
-    QThread *workerThread;
+    QThread *workerThread = NULL;
     QBtSPPWorker *worker;
     QBTSPP *btNew;
 
@@ -34,11 +34,14 @@ public slots:
 
 private slots:
     void onDisconnected();
+    void onConnectionErrorNotified();
 
 signals:
     void writedString(QString const &txStr);
     void connectionStatusChanged(bool status);
     void closedConnection();
+    void connectionErrorNotified();
+
 
 
 

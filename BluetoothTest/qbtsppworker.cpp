@@ -24,6 +24,8 @@ void QBtSPPWorker::setEndOfString(const QString &value)
 
 void QBtSPPWorker::onConnecting(){
     sp = new QSerialPort();
+    connect(sp, SIGNAL(readyRead()), this, SLOT(onStringReceive()));
+    connect(sp, SIGNAL(error(QSerialPort::SerialPortError)), SLOT(onError(QSerialPort::SerialPortError)));
     sp->setPortName(portName);
     sp->setBaudRate(baud);
     sp->setFlowControl(QSerialPort::NoFlowControl);
@@ -31,8 +33,12 @@ void QBtSPPWorker::onConnecting(){
     sp->setStopBits(QSerialPort::OneStop);
     emit connectionStatusChanged(false);
     sp->open(QIODevice::ReadWrite);
-    emit connectionStatusChanged(true);
-    connect(sp, SIGNAL(readyRead()), this, SLOT(onStringReceive()));
+    if (sp->isOpen()){
+        emit connectionStatusChanged(true);
+    }else{
+        emit connectionErrorNotified();
+    }
+
 }
 
 void QBtSPPWorker::onWriteString(QString str){
@@ -58,6 +64,10 @@ void QBtSPPWorker::onCloseConnection(){
     sp->close();
     qDebug () << "Disconnected...";
     emit disconnected();
+}
+
+void QBtSPPWorker::onError(QSerialPort::SerialPortError errorVal){
+    qDebug () << "Error: " << errorVal;
 }
 
 

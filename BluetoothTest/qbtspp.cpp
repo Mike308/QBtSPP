@@ -1,14 +1,16 @@
 #include "qbtspp.h"
 QBTSPP::QBTSPP()
 {
-    this->btNew = this;
+    //this->btNew = this;
 
 }
 
 QBTSPP::~QBTSPP(){
-    workerThread->quit();
-    workerThread->wait();
-    qDebug () << "Destroying object...";
+    if (workerThread != NULL){
+        workerThread->quit();
+        workerThread->wait();
+        qDebug () << "Destroying object...";
+    }
 }
 
 void QBTSPP::openConnection(QString portName, int baud){
@@ -21,6 +23,7 @@ void QBTSPP::openConnection(QString portName, int baud){
     connect(workerThread, SIGNAL(finished()), worker, SLOT(deleteLater()));
     connect(worker, SIGNAL(connectionStatusChanged(bool)),this, SLOT(onConnectionStatusChanged(bool)), Qt::DirectConnection);
     connect(worker, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+    connect(worker, SIGNAL(connectionErrorNotified()), this, SLOT(onConnectionErrorNotified()));
     connect(this, SIGNAL(writedString(QString)),worker, SLOT(onWriteString(QString)));
     connect(this, SIGNAL(closedConnection()), worker, SLOT(onCloseConnection()));
     workerThread->start();
@@ -37,6 +40,7 @@ void QBTSPP::openConnection(QString portName, int baud, QString endOfString){
     connect(workerThread, SIGNAL(finished()), worker, SLOT(deleteLater()));
     connect(worker, SIGNAL(connectionStatusChanged(bool)),this, SLOT(onConnectionStatusChanged(bool)), Qt::DirectConnection);
     connect(worker, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+    connect(worker, SIGNAL(connectionErrorNotified()), this, SLOT(onConnectionErrorNotified()));
     connect(this, SIGNAL(writedString(QString)),worker, SLOT(onWriteString(QString)));
     connect(this, SIGNAL(closedConnection()), worker, SLOT(onCloseConnection()));
     workerThread->start();
@@ -69,6 +73,10 @@ QStringList QBTSPP::getPortsList(){
 void QBTSPP::onDisconnected(){
     qDebug () << "Disconnected received";
     delete worker;
+}
+
+void QBTSPP::onConnectionErrorNotified(){
+    emit connectionErrorNotified();
 }
 
 

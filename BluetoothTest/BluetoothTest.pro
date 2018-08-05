@@ -27,12 +27,13 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     qbtspp.cpp \
-    qbtsppthread.cpp
+    qbtsppworker.cpp
 
 HEADERS += \
         mainwindow.h \
     qbtspp.h \
-    qbtsppthread.h
+    qbtsppworker.h \
+    qcustombt.h
 
 FORMS += \
         mainwindow.ui
